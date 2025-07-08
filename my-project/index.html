@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jasmine Cambridge English Placement Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            border: 2px solid #1a2a6c;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            color: #1a2a6c;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .progress-bar {
+            flex-grow: 1;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .timer {
+            background: #1a2a6c;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            min-width: 90px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .timer.expiring {
+            background: #b21f1f;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .question-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border: 2px solid #b21f1f;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .question {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            position: relative;
+        }
+        
+        .question-header {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #1a2a6c;
+            display: flex;
+            align-items: center;
+        }
+        
+        .question-number {
+            background: #1a2a6c;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        
+        .question-image {
+            text-align: center;
+            margin: 15px 0;
+            border: 2px dashed #1a2a6c;
+            padding: 15px;
+            border-radius: 8px;
+            background: #e3f2fd;
+        }
+        
+        .question-image img {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .option {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .option:hover {
+            border-color: #1a2a6c;
+            background: #f0f7ff;
+        }
+        
+        .option.selected {
+            border-color: #1a2a6c;
+            background: #e3f2fd;
+        }
+        
+        .option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .option.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        
+        .option input {
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        
+        .image-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .image-option {
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            padding: 10px;
+            transition: all 0.3s ease;
+            border: 2px solid #ddd;
+            background: white;
+        }
+        
+        .image-option:hover {
+            border-color: #1a2a6c;
+            background: #f0f7ff;
+        }
+        
+        .image-option.selected {
+            border-color: #1a2a6c;
+            background: #e3f2fd;
+        }
+        
+        .image-option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .image-option.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        
+        .image-option img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #eee;
+        }
+        
+        .audio-player {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px dashed #b21f1f;
+        }
+        
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .audio-btn {
+            background: #1a2a6c;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .audio-btn:hover {
+            background: #b21f1f;
+            transform: scale(1.1);
+        }
+        
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .progress-container-audio {
+            flex-grow: 1;
+            max-width: 400px;
+            background: #b0c4de;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-audio {
+            height: 100%;
+            background: #1a2a6c;
+            width: 0%;
+        }
+        
+        .time-display {
+            font-size: 0.9rem;
+            color: #555;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        /* 优化完形填空样式 */
+        .cloze-question {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #1a2a6c;
+        }
+        
+        .cloze-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .blank-container {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: top;
+            margin: 0 5px;
+            position: relative;
+        }
+        
+        .blank-number {
+            font-weight: bold;
+            color: #1a2a6c;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .blank {
+            display: inline-block;
+            min-width: 100px;
+            border-bottom: 2px dashed #1a2a6c;
+            text-align: center;
+            padding: 0 5px;
+            position: relative;
+        }
+        
+        .blank.correct {
+            border-bottom: 2px solid #28a745;
+        }
+        
+        .blank.incorrect {
+            border-bottom: 2px solid #dc3545;
+        }
+        
+        .blank select {
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            width: 100%;
+            outline: none;
+            cursor: pointer;
+            padding: 5px 0;
+            text-align: center;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .nav-btn:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: none;
+        }
+        
+        .correct-feedback {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+        
+        .incorrect-feedback {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+        
+        .submit-area {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Student Info Form Styles */
+        .student-form {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border: 2px solid #1a2a6c;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        
+        .form-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #1a2a6c;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1a2a6c;
+        }
+        
+        .form-group input, 
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, 
+        .form-group select:focus {
+            border-color: #1a2a6c;
+            outline: none;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            padding: 14px 0;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .start-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Results Page Styles */
+        .results-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border: 2px solid #1a2a6c;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        
+        .results-header {
+            margin-bottom: 30px;
+        }
+        
+        .congrats {
+            font-size: 1.8rem;
+            color: #1a2a6c;
+            margin-bottom: 15px;
+        }
+        
+        .test-date {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        
+        .result-card {
+            background: #f0f7ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid #1a2a6c;
+            text-align: left;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #1a2a6c;
+        }
+        
+        .result-value {
+            font-weight: 600;
+            color: #b21f1f;
+        }
+        
+        .level-badge {
+            display: inline-block;
+            background: #1a2a6c;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin: 15px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .level-description {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            border-left: 4px solid #1a2a6c;
+        }
+        
+        .level-title {
+            font-weight: bold;
+            color: #1a2a6c;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .restart-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* View Controls */
+        .view {
+            display: none;
+        }
+        
+        .view.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-options {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-container {
+                padding: 15px;
+            }
+            
+            .nav-btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+            
+            .congrats {
+                font-size: 1.5rem;
+            }
+            
+            .blank {
+                min-width: 80px;
+            }
+        }
+        
+        .error-message {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Student Info Form View -->
+        <div id="student-form-view" class="view active">
+            <header>
+                <h1><i class="fas fa-language"></i> Jasmine Cambridge English Placement Test</h1>
+                <p class="subtitle">Comprehensive assessment of your English proficiency</p>
+            </header>
+            
+            <div class="student-form">
+                <h2 class="form-title">Student Information</h2>
+                <div class="form-group">
+                    <label for="student-name">Full Name</label>
+                    <input type="text" id="student-name" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="student-age">Age</label>
+                    <input type="number" id="student-age" placeholder="Enter your age" min="5" max="25">
+                </div>
+                <div class="form-group">
+                    <label for="student-gender">Gender</label>
+                    <select id="student-gender">
+                        <option value="">Select your gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="student-grade">Grade Level</label>
+                    <select id="student-grade">
+                        <option value="">Select your grade</option>
+                        <option value="Elementary">Elementary School</option>
+                        <option value="Middle">Middle School</option>
+                        <option value="High">High School</option>
+                        <option value="College">College/University</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button class="start-btn" id="start-test">
+                    <i class="fas fa-play-circle"></i> Start Test
+                </button>
+            </div>
+        </div>
+        
+        <!-- Test View -->
+        <div id="test-view" class="view">
+            <header>
+                <h1><i class="fas fa-language"></i> Jasmine Cambridge English Placement Test</h1>
+                <p class="subtitle">Comprehensive assessment of your English proficiency</p>
+            </header>
+            
+            <div class="progress-container">
+                <div>Progress: <span id="current-question">1</span>/12</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 8.33%"></div>
+                </div>
+                <div class="timer" id="timer">01:00</div>
+            </div>
+            
+            <div class="question-container">
+                <!-- Question content will be dynamically filled -->
+            </div>
+            
+            <div class="error-message" id="resource-error"></div>
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="navigation">
+                <button class="nav-btn" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="nav-btn" id="next-btn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <div class="submit-area">
+                <button class="submit-btn" id="submit-test">
+                    <i class="fas fa-paper-plane"></i> Submit Test
+                </button>
+            </div>
+        </div>
+        
+        <!-- Results View -->
+        <div id="results-view" class="view">
+            <header>
+                <h1><i class="fas fa-language"></i> Jasmine Cambridge English Placement Test</h1>
+                <p class="subtitle">Comprehensive assessment of your English proficiency</p>
+            </header>
+            
+            <div class="results-container">
+                <div class="results-header">
+                    <h2 class="congrats">Congratulations <span id="result-name"></span>!</h2>
+                    <p class="test-date">You have successfully completed the test on <span id="result-date"></span></p>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-item">
+                        <span class="result-label">Total Questions:</span>
+                        <span class="result-value">12</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Correct Answers:</span>
+                        <span class="result-value"><span id="correct-answers">0</span> (<span id="percentage">0</span>%)</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Time Taken:</span>
+                        <span class="result-value"><span id="time-taken">5</span> minutes</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">English Level:</span>
+                        <span class="result-value" id="english-level">A2 Elementary</span>
+                    </div>
+                </div>
+                
+                <div class="level-badge" id="cefr-level">
+                    CEFR Level: A2
+                </div>
+                
+                <div class="level-description">
+                    <div class="level-title">Level Description:</div>
+                    <p id="level-desc">You have demonstrated the ability to understand sentences and frequently used expressions 
+                    related to areas of most immediate relevance. You can communicate in simple and routine 
+                    tasks requiring a simple and direct exchange of information on familiar and routine matters.</p>
+                </div>
+                
+                <button class="restart-btn" id="restart-test">
+                    <i class="fas fa-redo"></i> Take Test Again
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Audio elements -->
+    <audio id="correct-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+    <audio id="wrong-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+
+    <script>
+        // Student information
+        const studentInfo = {
+            name: "",
+            age: "",
+            gender: "",
+            grade: "",
+            startTime: null,
+            endTime: null
+        };
+
+        // Questions data with local paths - CORRECTED ANSWERS
+        const questions = [
+            {
+                id: 1,
+                type: "reading",
+                section: "Part 1: Reading Comprehension",
+                question: "Choose your answer",
+                image: "sources/images/q1.jpg",
+                alt: "Red car",
+                options: [
+                    { id: "A", text: "A: This is yellow." },
+                    { id: "B", text: "B: This is red." },
+                    { id: "C", text: "C: This is blue." }
+                ],
+                answer: "B"
+            },
+            {
+                id: 2,
+                type: "reading",
+                section: "Part 1: Reading Comprehension",
+                question: "Choose your answer",
+                image: "sources/images/q2.jpg",
+                alt: "Three bees",
+                options: [
+                    { id: "A", text: "A: These are three bees." },
+                    { id: "B", text: "B: These are two horses." },
+                    { id: "C", text: "C: These are four birds." }
+                ],
+                answer: "A"
+            },
+            {
+                id: 3,
+                type: "reading",
+                section: "Part 1: Reading Comprehension",
+                question: "Choose your answer",
+                image: "sources/images/q3.jpg",
+                alt: "Windy weather",
+                options: [
+                    { id: "A", text: "A: It's a snowy day." },
+                    { id: "B", text: "B: It's a rainy day." },
+                    { id: "C", text: "C: It's a windy day." }
+                ],
+                answer: "C"
+            },
+            {
+                id: 4,
+                type: "reading",
+                section: "Part 1: Reading Comprehension",
+                question: "Did you enjoy the TV show last night?",
+                options: [
+                    { id: "A", text: "A: Yes, me too." },
+                    { id: "B", text: "B: Yes, you did." },
+                    { id: "C", text: "C: Yes, very much." }
+                ],
+                answer: "C"
+            },
+            {
+                id: 5,
+                type: "reading",
+                section: "Part 1: Reading Comprehension",
+                question: "What's your sister like?",
+                options: [
+                    { id: "A", text: "A: She likes bananas." },
+                    { id: "B", text: "B: She goes to school." },
+                    { id: "C", text: "C: She's very nice and cool." }
+                ],
+                answer: "C"
+            },
+            {
+                id: 6,
+                type: "reading",
+                section: "Part 1: Reading Comprehension",
+                question: "I love your cat, Alice!",
+                options: [
+                    { id: "A", text: "A: Yes, please." },
+                    { id: "B", text: "B: So do I." },
+                    { id: "C", text: "C: If you like." }
+                ],
+                answer: "B"
+            },
+            {
+                id: 7,
+                type: "cloze",
+                section: "Part 1: Reading Comprehension",
+                question: "Complete the passage:",
+                text: `Look up at the sky when it's dark. If there 
+                    <span class="blank-container">
+                        <span class="blank-number">1</span>
+                        <span class="blank" id="blank7-1">
+                            <select name="q7-1">
+                                <option value="">--</option>
+                                <option value="A">is</option>
+                                <option value="B">be</option>
+                                <option value="C">are</option>
+                            </select>
+                        </span>
+                    </span> 
+                    no clouds, you will see the moon. There is no sound, air, wind or other kinds 
+                    <span class="blank-container">
+                        <span class="blank-number">2</span>
+                        <span class="blank" id="blank7-2">
+                            <select name="q7-2">
+                                <option value="">--</option>
+                                <option value="A">of</option>
+                                <option value="B">for</option>
+                                <option value="C">in</option>
+                            </select>
+                        </span>
+                    </span> 
+                    weather on the moon. Tourists can't visit the moon yet, but rockets have 
+                    <span class="blank-container">
+                        <span class="blank-number">3</span>
+                        <span class="blank" id="blank7-3">
+                            <select name="q7-3">
+                                <option value="">--</option>
+                                <option value="A">took</option>
+                                <option value="B">take</option>
+                                <option value="C">taken</option>
+                            </select>
+                        </span>
+                    </span> 
+                    astronauts there. The first person 
+                    <span class="blank-container">
+                        <span class="blank-number">4</span>
+                        <span class="blank" id="blank7-4">
+                            <select name="q7-4">
+                                <option value="">--</option>
+                                <option value="A">whose</option>
+                                <option value="B">that</option>
+                                <option value="C">because</option>
+                            </select>
+                        </span>
+                    </span> 
+                    walked on the moon was Neil Armstrong in 1969.`,
+                answers: ["C", "A", "C", "B"] // CORRECTED: First answer is "are" (C)
+            },
+            {
+                id: 8,
+                type: "listening",
+                section: "Part 2: Listening Comprehension",
+                question: "Where's Hannah now?",
+                audio: "sources/audio/q8.mp3",
+                images: [
+                    { id: "A", src: "sources/images/q8-a.jpg", alt: "Bathroom" },
+                    { id: "B", src: "sources/images/q8-b.jpg", alt: "Kitchen" },
+                    { id: "C", src: "sources/images/q8-c.jpg", alt: "Living room" }
+                ],
+                answer: "B" // CORRECTED: Changed from A to B
+            },
+            {
+                id: 9,
+                type: "listening",
+                section: "Part 2: Listening Comprehension",
+                question: "What will John wear to the party?",
+                audio: "sources/audio/q9.mp3",
+                images: [
+                    { id: "A", src: "sources/images/q9-a.jpg", alt: "jeans-floral-tshirt.jpg" },
+                    { id: "B", src: "sources/images/q9-b.jpg", alt: "skirt-white-tshirt.jpg" },
+                    { id: "C", src: "sources/images/q9-c.jpg", alt: "jeans-white-tshirt.jpg" }
+                ],
+                answer: "A" // CORRECTED: Changed from C to A
+            },
+            {
+                id: 10,
+                type: "listening",
+                section: "Part 2: Listening Comprehension",
+                question: "What's Sophie doing now?",
+                audio: "sources/audio/q10.mp3",
+                images: [
+                    { id: "A", src: "sources/images/q10-a.jpg", alt: "Playing piano" },
+                    { id: "B", src: "sources/images/q10-b.jpg", alt: "Playing computer" },
+                    { id: "C", src: "sources/images/q10-c.jpg", alt: "Doing homework" }
+                ],
+                answer: "C" // CORRECTED: Changed from B to C
+            },
+            {
+                id: 11,
+                type: "listening",
+                section: "Part 2: Listening Comprehension",
+                question: "What's the boy's favorite birthday present?",
+                audio: "sources/audio/q11.mp3",
+                images: [
+                    { id: "A", src: "sources/images/q11-a.jpg", alt: "Bicycle" },
+                    { id: "B", src: "sources/images/q11-b.jpg", alt: "Robot" },
+                    { id: "C", src: "sources/images/q11-c.jpg", alt: "Phone" }
+                ],
+                answer: "B" // CORRECTED: Changed from A to B
+            },
+            {
+                id: 12,
+                type: "listening",
+                section: "Part 2: Listening Comprehension",
+                question: "What time is the basketball match?",
+                audio: "sources/audio/q12.mp3",
+                images: [
+                    { id: "A", src: "sources/images/q12-a.jpg", alt: "3:15" },
+                    { id: "B", src: "sources/images/q12-b.jpg", alt: "3:30" },
+                    { id: "C", src: "sources/images/q12-c.jpg", alt: "3:45" }
+                ],
+                answer: "C" // CORRECTED: Changed from B to C
+            }
+        ];
+
+        // Application state
+        const state = {
+            currentQuestion: 0,
+            userAnswers: new Array(questions.length).fill(null),
+            answered: new Array(questions.length).fill(false),
+            timer: null,
+            timeLeft: 60,
+            startTime: null,
+            endTime: null
+        };
+
+        // DOM elements
+        const elements = {
+            container: document.querySelector('.question-container'),
+            prevBtn: document.getElementById('prev-btn'),
+            nextBtn: document.getElementById('next-btn'),
+            submitBtn: document.getElementById('submit-test'),
+            timerDisplay: document.getElementById('timer'),
+            currentQuestionDisplay: document.getElementById('current-question'),
+            progressFill: document.getElementById('progress-fill'),
+            feedback: document.getElementById('feedback'),
+            studentFormView: document.getElementById('student-form-view'),
+            testView: document.getElementById('test-view'),
+            resultsView: document.getElementById('results-view'),
+            startBtn: document.getElementById('start-test'),
+            restartBtn: document.getElementById('restart-test'),
+            resultName: document.getElementById('result-name'),
+            resultDate: document.getElementById('result-date'),
+            correctAnswers: document.getElementById('correct-answers'),
+            timeTaken: document.getElementById('time-taken'),
+            percentage: document.getElementById('percentage'),
+            englishLevel: document.getElementById('english-level'),
+            cefrLevel: document.getElementById('cefr-level'),
+            levelDesc: document.getElementById('level-desc'),
+            resourceError: document.getElementById('resource-error')
+        };
+
+        // Initialize application
+        function init() {
+            setupEventListeners();
+        }
+
+        // Render current question
+        function renderQuestion() {
+            const question = questions[state.currentQuestion];
+            let html = `
+                <div class="section-title">
+                    <i class="${question.type === 'reading' ? 'fas fa-book-reader' : 'fas fa-headphones'}"></i>
+                    <h2>${question.section}</h2>
+                </div>
+                <div class="question">
+                    <div class="question-header">
+                        <span class="question-number">${question.id}</span>
+                        <span>${question.question}</span>
+                    </div>`;
+            
+            if (question.image) {
+                html += `
+                    <div class="question-image">
+                        <img src="${question.image}" alt="${question.alt}" onerror="showResourceError('Image failed to load')">
+                    </div>`;
+            }
+            
+            if (question.audio) {
+                html += `
+                    <div class="audio-player">
+                        <audio id="audio${question.id}" src="${question.audio}" onerror="showResourceError('Audio failed to load')"></audio>
+                        <div class="audio-controls">
+                            <button class="audio-btn" id="playBtn${question.id}">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <div class="progress-container-audio">
+                                <div class="progress-bar-audio" id="progress${question.id}"></div>
+                            </div>
+                            <div class="time-display" id="time${question.id}">0:00 / 0:00</div>
+                        </div>
+                    </div>`;
+            }
+            
+            if (question.options) {
+                html += `<div class="options">`;
+                question.options.forEach(option => {
+                    const isSelected = state.userAnswers[state.currentQuestion] === option.id;
+                    const isAnswered = state.answered[state.currentQuestion];
+                    let classes = "option";
+                    
+                    if (isSelected) {
+                        classes += " selected";
+                        if (isAnswered) {
+                            classes += option.id === question.answer ? " correct" : " incorrect";
+                        }
+                    }
+                    
+                    html += `
+                        <label class="${classes}" data-value="${option.id}">
+                            <input type="radio" name="q${question.id}" value="${option.id}" 
+                                ${isSelected ? 'checked' : ''}
+                                ${isAnswered ? 'disabled' : ''}>
+                            <span>${option.text}</span>
+                        </label>`;
+                });
+                html += `</div>`;
+            }
+            
+            if (question.images) {
+                html += `<div class="image-options">`;
+                question.images.forEach(image => {
+                    const isSelected = state.userAnswers[state.currentQuestion] === image.id;
+                    const isAnswered = state.answered[state.currentQuestion];
+                    let classes = "image-option";
+                    
+                    if (isSelected) {
+                        classes += " selected";
+                        if (isAnswered) {
+                            classes += image.id === question.answer ? " correct" : " incorrect";
+                        }
+                    }
+                    
+                    html += `
+                        <div class="${classes}" data-value="${image.id}">
+                            <img src="${image.src}" alt="${image.alt}" onerror="showResourceError('Image failed to load')">
+                            <input type="radio" name="q${question.id}" value="${image.id}" 
+                                ${isSelected ? 'checked' : ''}
+                                ${isAnswered ? 'disabled' : ''}> ${image.id}
+                        </div>`;
+                });
+                html += `</div>`;
+            }
+            
+            if (question.type === "cloze") {
+                html += `
+                    <div class="cloze-question">
+                        <p class="cloze-text">${question.text}</p>
+                    </div>`;
+            }
+            
+            elements.container.innerHTML = html;
+            
+            // Update progress
+            elements.currentQuestionDisplay.textContent = state.currentQuestion + 1;
+            elements.progressFill.style.width = `${((state.currentQuestion + 1) / questions.length) * 100}%`;
+            
+            // Update button states
+            elements.prevBtn.disabled = state.currentQuestion === 0;
+            elements.nextBtn.disabled = state.currentQuestion === questions.length - 1;
+            elements.submitBtn.style.display = state.currentQuestion === questions.length - 1 ? "block" : "none";
+            
+            // Setup audio player if exists
+            if (question.audio) {
+                setupAudioPlayer(question.id);
+            }
+            
+            // Setup option listeners
+            setupOptionListeners();
+            
+            // Setup cloze question listeners if applicable
+            if (question.type === "cloze") {
+                setupClozeListeners(question);
+            }
+            
+            // Apply cloze answer status if answered
+            if (state.answered[state.currentQuestion] && question.type === "cloze") {
+                applyClozeAnswerStatus(question);
+            }
+        }
+
+        // Show resource error
+        function showResourceError(message) {
+            elements.resourceError.textContent = message;
+            elements.resourceError.style.display = "block";
+        }
+
+        // Setup cloze question listeners
+        function setupClozeListeners(question) {
+            const selects = document.querySelectorAll(`select[name^="q${question.id}-"]`);
+            selects.forEach((select, index) => {
+                // Set initial value if exists
+                if (state.userAnswers[state.currentQuestion] && 
+                    state.userAnswers[state.currentQuestion][index]) {
+                    select.value = state.userAnswers[state.currentQuestion][index];
+                }
+                
+                select.addEventListener('change', function() {
+                    // Initialize or update user answers array
+                    if (!state.userAnswers[state.currentQuestion]) {
+                        state.userAnswers[state.currentQuestion] = new Array(selects.length).fill('');
+                    }
+                    
+                    // Update this answer
+                    state.userAnswers[state.currentQuestion][index] = this.value;
+                    
+                    // Check if all answers are provided
+                    const allAnswered = state.userAnswers[state.currentQuestion].every(a => a !== '');
+                    
+                    // If all answered, check the answer
+                    if (allAnswered && !state.answered[state.currentQuestion]) {
+                        checkAnswer();
+                    }
+                });
+            });
+        }
+
+        // Apply cloze answer status
+        function applyClozeAnswerStatus(question) {
+            const blanks = document.querySelectorAll('.blank');
+            const userAnswers = state.userAnswers[state.currentQuestion];
+            
+            blanks.forEach((blank, index) => {
+                if (userAnswers && userAnswers[index]) {
+                    // Check if this blank is correct
+                    if (userAnswers[index] === question.answers[index]) {
+                        blank.classList.add('correct');
+                    } else {
+                        blank.classList.add('incorrect');
+                    }
+                }
+            });
+        }
+
+        // Setup option listeners
+        function setupOptionListeners() {
+            document.querySelectorAll('.option, .image-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    if (state.answered[state.currentQuestion]) return;
+                    
+                    const value = this.getAttribute('data-value');
+                    state.userAnswers[state.currentQuestion] = value;
+                    renderQuestion();
+                    
+                    // Automatically check answer
+                    checkAnswer();
+                });
+            });
+        }
+
+        // Check answer
+        function checkAnswer() {
+            const currentQuestion = questions[state.currentQuestion];
+            const userAnswer = state.userAnswers[state.currentQuestion];
+            
+            if (userAnswer === null) return;
+            
+            let isCorrect = false;
+            
+            if (currentQuestion.type === "cloze") {
+                // Check if all blanks are filled
+                if (!userAnswer || !Array.isArray(userAnswer)) return;
+                if (userAnswer.some(a => a === '')) return;
+                
+                // Compare each answer
+                isCorrect = true;
+                for (let i = 0; i < userAnswer.length; i++) {
+                    if (userAnswer[i] !== currentQuestion.answers[i]) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+            } else {
+                isCorrect = userAnswer === currentQuestion.answer;
+            }
+            
+            state.answered[state.currentQuestion] = true;
+            
+            // Show feedback
+            elements.feedback.textContent = isCorrect ? 
+                "✓ Correct Answer!" : "✗ Incorrect Answer!";
+            elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+            elements.feedback.style.display = "block";
+            
+            // Play sound effect
+            const sound = document.getElementById(isCorrect ? 'correct-sound' : 'wrong-sound');
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log("Audio play error:", e));
+            
+            // Re-render to show correct/incorrect status
+            renderQuestion();
+            
+            // Stop timer
+            clearInterval(state.timer);
+        }
+
+        // Setup audio player
+        function setupAudioPlayer(questionId) {
+            const audio = document.getElementById(`audio${questionId}`);
+            const playBtn = document.getElementById(`playBtn${questionId}`);
+            const progressBar = document.getElementById(`progress${questionId}`);
+            const timeDisplay = document.getElementById(`time${questionId}`);
+            
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
+            
+            const updateProgress = () => {
+                if (audio.duration) {
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    progressBar.style.width = `${progress}%`;
+                    timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+                }
+            };
+            
+            playBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play().catch(e => {
+                        showResourceError('Audio playback failed. Please check the file.');
+                        console.error("Audio playback error:", e);
+                    });
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                } else {
+                    audio.pause();
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            });
+            
+            audio.addEventListener('timeupdate', updateProgress);
+            
+            audio.addEventListener('ended', () => {
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                progressBar.style.width = '0%';
+                if (audio.duration) {
+                    timeDisplay.textContent = `0:00 / ${formatTime(audio.duration)}`;
+                }
+            });
+            
+            audio.addEventListener('loadedmetadata', () => {
+                if (audio.duration) {
+                    timeDisplay.textContent = `0:00 / ${formatTime(audio.duration)}`;
+                }
+            });
+        }
+
+        // Start timer
+        function startTimer() {
+            clearInterval(state.timer);
+            state.timeLeft = 60;
+            updateTimerDisplay();
+            
+            state.timer = setInterval(() => {
+                state.timeLeft--;
+                updateTimerDisplay();
+                
+                if (state.timeLeft <= 0) {
+                    clearInterval(state.timer);
+                    if (!state.answered[state.currentQuestion]) {
+                        state.userAnswers[state.currentQuestion] = null;
+                        state.answered[state.currentQuestion] = true;
+                        checkAnswer();
+                    }
+                }
+            }, 1000);
+        }
+
+        // Update timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.timeLeft / 60);
+            const seconds = state.timeLeft % 60;
+            elements.timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Add animation for last 10 seconds
+            if (state.timeLeft <= 10) {
+                elements.timerDisplay.classList.add('expiring');
+            } else {
+                elements.timerDisplay.classList.remove('expiring');
+            }
+        }
+
+        // Go to next question
+        function nextQuestion() {
+            if (state.currentQuestion < questions.length - 1) {
+                state.currentQuestion++;
+                renderQuestion();
+                startTimer();
+                elements.feedback.style.display = "none";
+                elements.resourceError.style.display = "none";
+            }
+        }
+
+        // Go to previous question
+        function prevQuestion() {
+            if (state.currentQuestion > 0) {
+                state.currentQuestion--;
+                renderQuestion();
+                startTimer();
+                elements.feedback.style.display = "none";
+                elements.resourceError.style.display = "none";
+            }
+        }
+
+        // Submit test and show results
+        function submitTest() {
+            state.endTime = new Date();
+            showResults();
+        }
+
+        // Show results page
+        function showResults() {
+            // Calculate score
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (state.answered[i]) {
+                    const question = questions[i];
+                    
+                    if (question.type === "cloze") {
+                        // For cloze questions, check each answer
+                        if (state.userAnswers[i] && Array.isArray(state.userAnswers[i])) {
+                            let allCorrect = true;
+                            for (let j = 0; j < state.userAnswers[i].length; j++) {
+                                if (state.userAnswers[i][j] !== question.answers[j]) {
+                                    allCorrect = false;
+                                    break;
+                                }
+                            }
+                            if (allCorrect) correctCount++;
+                        }
+                    } else if (state.userAnswers[i] === question.answer) {
+                        correctCount++;
+                    }
+                }
+            }
+            
+            // Calculate time taken in minutes
+            const timeTaken = Math.round((state.endTime - state.startTime) / 60000);
+            
+            // Calculate percentage
+            const percentage = Math.round((correctCount / questions.length) * 100);
+            
+            // Determine CEFR level
+            let level, levelText, levelDescription;
+            if (percentage >= 90) {
+                level = "B2";
+                levelText = "Upper Intermediate";
+                levelDescription = "You have demonstrated the ability to understand the main ideas of complex text on both concrete and abstract topics. You can interact with a degree of fluency and spontaneity that makes regular interaction with native speakers quite possible without strain for either party.";
+            } else if (percentage >= 75) {
+                level = "B1";
+                levelText = "Intermediate";
+                levelDescription = "You have demonstrated the ability to understand the main points of clear standard input on familiar matters regularly encountered in work, school, leisure, etc. You can deal with most situations likely to arise whilst travelling in an area where the language is spoken.";
+            } else if (percentage >= 60) {
+                level = "A2";
+                levelText = "Elementary";
+                levelDescription = "You have demonstrated the ability to understand sentences and frequently used expressions related to areas of most immediate relevance. You can communicate in simple and routine tasks requiring a simple and direct exchange of information on familiar and routine matters.";
+            } else {
+                level = "A1";
+                levelText = "Beginner";
+                levelDescription = "You have demonstrated the ability to understand and use familiar everyday expressions and very basic phrases. You can introduce yourself and others and can ask and answer questions about personal details such as where you live, people you know and things you have.";
+            }
+            
+            // Update results display
+            elements.resultName.textContent = studentInfo.name;
+            elements.resultDate.textContent = state.endTime.toLocaleString();
+            elements.correctAnswers.textContent = correctCount;
+            elements.percentage.textContent = percentage;
+            elements.timeTaken.textContent = timeTaken;
+            elements.englishLevel.textContent = `${level} ${levelText}`;
+            elements.cefrLevel.textContent = `CEFR Level: ${level}`;
+            elements.levelDesc.textContent = levelDescription;
+            
+            // Switch views
+            elements.testView.classList.remove('active');
+            elements.resultsView.classList.add('active');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Navigation buttons
+            elements.prevBtn.addEventListener('click', prevQuestion);
+            elements.nextBtn.addEventListener('click', nextQuestion);
+            elements.submitBtn.addEventListener('click', submitTest);
+            
+            // Start test button
+            elements.startBtn.addEventListener('click', () => {
+                // Collect student info
+                studentInfo.name = document.getElementById('student-name').value;
+                studentInfo.age = document.getElementById('student-age').value;
+                studentInfo.gender = document.getElementById('student-gender').value;
+                studentInfo.grade = document.getElementById('student-grade').value;
+                
+                if (!studentInfo.name || !studentInfo.age || !studentInfo.gender || !studentInfo.grade) {
+                    alert("Please fill in all fields");
+                    return;
+                }
+                
+                // Record start time
+                state.startTime = new Date();
+                
+                // Switch to test view
+                elements.studentFormView.classList.remove('active');
+                elements.testView.classList.add('active');
+                
+                // Start test
+                renderQuestion();
+                startTimer();
+            });
+            
+            // Restart test button
+            elements.restartBtn.addEventListener('click', () => {
+                // Reset state
+                state.currentQuestion = 0;
+                state.userAnswers = new Array(questions.length).fill(null);
+                state.answered = new Array(questions.length).fill(false);
+                
+                // Switch back to student form
+                elements.resultsView.classList.remove('active');
+                elements.studentFormView.classList.add('active');
+            });
+        }
+
+        // Initialize application
+        init();
+    </script>
+</body>
+</html>
